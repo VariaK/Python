@@ -1,0 +1,7 @@
+venv/
+.conda-vir-env/
+__pycache__/
+.env
+response.txt
+testing_db.py
+py
