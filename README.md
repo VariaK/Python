@@ -38,3 +38,8 @@
 +-------------------------------+-----------+-----------+--------+
 3 price changes detected. Report saved to reports/2026-02-24.csv
 ```
+** Output :**
+<img width="1210" height="397" alt="Screenshot 2026-04-13 091915" src="https://github.com/user-attachments/assets/12832e69-8d54-467d-a9f6-6618ebb22a10" />
+<img width="526" height="434" alt="Screenshot 2026-04-13 094035" src="https://github.com/user-attachments/assets/90d007b6-95a4-4612-afd7-f9f59b11918f" />
+<img width="927" height="402" alt="Screenshot 2026-04-13 094210" src="https://github.com/user-attachments/assets/fae35e9f-4411-431c-aa89-5b77712645a8" />
+
