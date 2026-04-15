@@ -4,59 +4,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WebSocket Example</title>
+    <title>Chat Simulation</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-    <h1>GFG WebSocket Example</h1>
-    <input type="text" id="inputText" placeholder="Type something...">
-    <button id="submitButton">Submit</button>
-    <div id="container"></div>
 
-    <script>
-        function getRandomInt(min, max) {
-            return Math.floor(Math.random() * (max - min + 1)) + min;
-        }
+    <div class="chat-container">
+        <div class="chat-header">
+            <div class="left-header">
+                <img src="./assets/arrow-left.svg" alt="arrow-left">
+                <div class="text">Chat</div>
+            </div>
+            <div class="call">
+                <img src="./assets/video.svg" alt="video">
+                <img src="./assets/phone.svg" alt="phone">
+            </div>
+        </div>
 
-        // Example: Generate a random number between 1 and 100
-        const id = getRandomInt(1, 1000);
+        <div id="chat-box" class="chat-box"></div>
 
-        // Create a WebSocket connection to the server
-        const socket = new WebSocket('ws://127.0.0.1:8000/ws/' + id);
-        console.log('ws://127.0.0.1:8000/ws/' + id)
+        <div class="chat-input">
+            <input type="text" id="message-input" placeholder="Type a message...">
+            <button onclick="sendMessage()"><img src="./assets/send.svg" alt="send"></button>
+        </div>
+    </div>
 
-        // Function to display messages on the web page
-        function showMessage(message) {
-            const messageContainer = document.getElementById('container');
-            const messageElement = document.createElement('div');
-            messageElement.textContent = message;
-            messageContainer.appendChild(messageElement);
-        }
-
-        // Event handler for when the connection is established
-        socket.addEventListener('open', (event) => {
-            showMessage('Connected to server.');
-        });
-
-        // Event handler for receiving messages from the server
-        socket.onmessage = (event) => {
-            showMessage("You sent : " + event.data)
-        }
-
-        // Event handler for when the connection is closed
-        socket.addEventListener('close', (event) => {
-            showMessage('Connection closed.');
-        });
-
-        const inputText = document.getElementById("inputText");
-        const submitButton = document.getElementById("submitButton");
-
-        submitButton.addEventListener("click", function () {
-            const inputValue = inputText.value;
-            socket.send(inputValue)
-        });
-
-    </script>
+    <script src="script.js"></script>
 </body>
 
 </html>
