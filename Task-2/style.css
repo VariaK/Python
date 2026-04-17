@@ -125,4 +125,12 @@ img {
   background: #f1f1f1;
   padding: 10px;
   border-radius: 10px;
+  list-style: none;
+}
+.users-list li {
+    cursor: pointer;
+    padding: 5px 0;
+}
+.users-list li:hover {
+    font-weight: bold;
 }
