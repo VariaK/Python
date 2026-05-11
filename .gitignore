@@ -1,9 +1,36 @@
+# Environments
 venv/
 .conda-vir-env/
-__pycache__/
+.venv/
+env/
+ENV/
 .env
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+.coverage
+htmlcov/
+test.ipynb
+
+# ML/Data
+models/
+*.pkl
+*.joblib
+*.csv
+*.xlsx
+*.parquet
+
+# Logs & Temp
+*.log
 response.txt
 testing_db.py
-py
-test.ipynb
 chat.db
+.DS_Store
+
+# IDEs
+.vscode/
+.idea/
