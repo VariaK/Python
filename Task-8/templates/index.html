@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Real-Time Data Streaming Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Real-Time Factory Dashboard</h1>
+            <div class="status-indicator">
+                <span class="dot live"></span> Live Stream
+            </div>
+        </header>
+
+        <main>
+            <div class="charts-container">
+                <div class="chart-card">
+                    <h2>Sensor T1 — Temperature (last 5 min)</h2>
+                    <div class="stats-bar">
+                        <div class="stat-item">
+                            <span class="label">Current Temp:</span>
+                            <span class="value" id="currentTemp">-- F</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="label">5-min Moving Avg:</span>
+                            <span class="value" id="movingAvg">-- F</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="label">Z-Score:</span>
+                            <span class="value" id="zScore">--</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="label">Status:</span>
+                            <span class="value badge normal" id="statusBadge">NORMAL</span>
+                        </div>
+                    </div>
+                    <canvas id="tempChart"></canvas>
+                </div>
+            </div>
+
+            <div class="alerts-container">
+                <h2>Alert Log</h2>
+                <div class="alert-list" id="alertList">
+                    <!-- Alerts will be prepended here -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const ctx = document.getElementById('tempChart').getContext('2d');
+        const maxDataPoints = 30; // Display last 30 seconds on chart
+        
+        const tempChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [
+                    {
+                        label: 'Temperature (F)',
+                        data: [],
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4
+                    },
+                    {
+                        label: 'Threshold (100F)',
+                        data: [],
+                        borderColor: '#ef4444',
+                        borderDash: [5, 5],
+                        borderWidth: 1,
+                        pointRadius: 0,
+                        fill: false
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                animation: false,
+                scales: {
+                    x: {
+                        grid: { display: false }
+                    },
+                    y: {
+                        min: 60,
+                        max: 120,
+                        grid: { color: '#e5e7eb' }
+                    }
+                },
+                plugins: {
+                    legend: { display: true }
+                }
+            }
+        });
+
+        // Setup WebSocket
+        const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        const wsUrl = `${wsProtocol}//${window.location.host}/ws`;
+        const ws = new WebSocket(wsUrl);
+
+        ws.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            
+            // Format time
+            const d = new Date(data.timestamp * 1000);
+            const timeStr = d.toLocaleTimeString();
+
+            // Update UI Stats
+            document.getElementById('currentTemp').textContent = `${data.temp.toFixed(1)} F`;
+            document.getElementById('movingAvg').textContent = `${data.mean_temp.toFixed(1)} F`;
+            document.getElementById('zScore').textContent = data.z_temp.toFixed(2);
+            
+            const badge = document.getElementById('statusBadge');
+            badge.textContent = data.status;
+            badge.className = `value badge ${data.status.toLowerCase()}`;
+
+            // Update Chart
+            tempChart.data.labels.push(timeStr);
+            tempChart.data.datasets[0].data.push(data.temp);
+            tempChart.data.datasets[1].data.push(100);
+
+            if (tempChart.data.labels.length > maxDataPoints) {
+                tempChart.data.labels.shift();
+                tempChart.data.datasets[0].data.shift();
+                tempChart.data.datasets[1].data.shift();
+            }
+            tempChart.update();
+
+            // Handle Alerts
+            if (data.alert) {
+                const alertList = document.getElementById('alertList');
+                const alertDiv = document.createElement('div');
+                alertDiv.className = 'alert-item';
+                alertDiv.innerHTML = `
+                    <div class="alert-header">
+                        <span class="alert-time">${timeStr}</span>
+                        <span class="alert-sensor">${data.alert.sensor}</span>
+                    </div>
+                    <div class="alert-body">
+                        <strong>${data.alert.message}</strong><br>
+                        Current: ${data.alert.current}F | 5-min avg: ${data.alert.avg}F | Deviation: +${data.alert.sigma} sigma<br>
+                        <em>Action: Notification sent to ops-team@factory.com</em>
+                    </div>
+                `;
+                alertList.prepend(alertDiv);
+            }
+        };
+    </script>
+</body>
+</html>
