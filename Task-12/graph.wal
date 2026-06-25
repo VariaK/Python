@@ -1,0 +1,5 @@
+{"op": "create_node", "data": {"id": 1, "label": "Person", "props": {"name": "Alice", "age": 30, "city": "Austin"}}, "ts": 1781012872.6316319}
+{"op": "create_node", "data": {"id": 2, "label": "Person", "props": {"name": "Bob", "age": 28, "city": "Dallas"}}, "ts": 1781012872.6316319}
+{"op": "create_node", "data": {"id": 3, "label": "Company", "props": {"name": "Acme Corp", "industry": "Tech"}}, "ts": 1781012872.6316319}
+{"op": "create_edge", "data": {"id": 1, "from_id": 1, "to_id": 2, "type": "FRIENDS_WITH", "props": {"since": 2021}}, "ts": 1781012872.6316319}
+{"op": "create_edge", "data": {"id": 2, "from_id": 2, "to_id": 3, "type": "WORKS_AT", "props": {"role": "Engineer"}}, "ts": 1781012872.6316319}
